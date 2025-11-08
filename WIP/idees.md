@@ -6,7 +6,7 @@
 
 - Idees generals: https://cryptpad.fr/doc/#/2/doc/edit/XkjJuGwjkZJUwwJZGtvSnX4Z/
 
--Wikipedia QKD: https://en.wikipedia.org/wiki/Quantum_key_distribution#Information_reconciliation_and_privacy_amplification
+- Wikipedia QKD: https://en.wikipedia.org/wiki/Quantum_key_distribution#Information_reconciliation_and_privacy_amplification
 
 - BB84 implementat: https://github.com/lEuT01/quantum-key-distribution-bb84
 
