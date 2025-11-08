@@ -1,3 +1,4 @@
 # Carpetes que cal ignorar
 .vscode/*
 .git/*
+recursos/Qiskit_101_Hands-on.ipynb
