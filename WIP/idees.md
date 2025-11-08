@@ -1,9 +1,11 @@
 # 🃏 Qiskit Fall Fest 2025 (Hackaton)
 
-## Coneixement general
+## Enllaços d'interés
 
-Blablabla
+- Tasques: https://cryptpad.fr/kanban/#/2/kanban/edit/hYeQxb5PMRks9thik0QlRj83/
 
-## Idees
+- Idees generals: https://cryptpad.fr/doc/#/2/doc/edit/XkjJuGwjkZJUwwJZGtvSnX4Z/
+
+## Altres
 
 Blablabla
