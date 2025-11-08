@@ -6,6 +6,8 @@
 
 - Idees generals: https://cryptpad.fr/doc/#/2/doc/edit/XkjJuGwjkZJUwwJZGtvSnX4Z/
 
+- BB84 implementat: https://github.com/lEuT01/quantum-key-distribution-bb84
+
 ## Altres
 
 Blablabla
