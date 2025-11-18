@@ -1,0 +1,5 @@
+# Carpetes que cal ignorar
+.vscode/*
+.git/*
+recursos/BB84_implementacio.ipynb
+recursos/Qiskit_101_Hands-on.ipynb

@@ -1,0 +1,102 @@
+% Classe de document
+\documentclass[a4paper,11pt,onecolumn,final,english,openbib]{scrbook}
+
+% Marges del document
+\addtolength{\headheight}{2cm}
+%\addtolength{\topmargin}{2cm}
+\setlength{\oddsidemargin}{1.0cm}
+\setlength{\evensidemargin}{0.5cm}
+\setlength{\textwidth}{14.3cm}
+\setlength{\parindent}{0mm}
+
+% Paquets
+\usepackage[catalan]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}  % The main package for code
+\usepackage{xcolor}    % Required for syntax highlighting colors
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{enumerate,physics}
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{dsfont}
+\usepackage{slashed}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage{hyperref} 
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{epigraph}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{tikz}
+\usepackage{lineno}
+\usepackage{placeins}
+%\FloatBarrier
+\lstdefinestyle{mypythonstyle}{
+    language=Python,
+    basicstyle=\ttfamily\small,       % Use a small typewriter font
+    keywordstyle=\color{blue},        % Python keywords in blue
+    stringstyle=\color{red!60!black},  % Strings in a reddish-black
+    commentstyle=\color{green!60!black},% Comments in a dark green
+    numbers=left,                   % Show line numbers on the left
+    numberstyle=\tiny\color{gray},    % Make line numbers small and gray
+    frame=single,                   % Draw a single-line box around the code
+    breaklines=true,                % Automatically break long lines
+    showstringspaces=false,         % Don't put ugly markers for spaces in strings
+    tabsize=4                       % Set tab size
+}
+
+% Coses addicionals
+\font\afont=cmssbx10 scaled \magstep5     % for the title
+\font\bfont=cmssbx10 scaled \magstep4     % for chapter headings
+\font\cfont=cmssbx10 scaled \magstep3
+\font\dfont=cmssbx10 scaled \magstep2     % for section headings and author name
+\font\efont=cmssbx10 scaled \magstephalf
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\setlength{\textfloatsep}{10pt}  % space between text and float (table/figure)
+\setlength{\floatsep}{10pt}      % space between floats
+\setlength{\intextsep}{10pt}     % space between in-text floats and text
+
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus .2ex}%
+  {\normalfont\normalsize\bfseries}
+}
+\makeatother
+\renewcommand{\thesection}{\arabic{section}}
+
+\pagestyle{empty}
+\pagestyle{headings}
+
+% Document
+\begin{document}
+\pagenumbering{roman}
+\title{Qiskit Fall Fest 2025}
+\author{Jorge Giménez, Miguel Hernández, Andreu Moreno y Rubén Piles}
+\maketitle
+
+\section{Per què ens interessa el problema?}
+El protocol BB84 és el primer cas pràctic de distribució quàntica de claus. Gràcies a la QKD, el problema de la seguretat incondicional queda, en teoria, resolt. No obstant això, obre la porta a diversos inconvenients que cal abordar. Nosaltres ens centrarem en les possibles vulnerabilitats i, concretament, en les que s'amaguen rere els errors dels sistemes amb què treballem.
+\section{Estat de la situació}
+\subsection{Cas ideal de BB84}
+El protocol de QKD BB84 està bassat en el col.lapse de la funció d'ona. Els passos són els següents:
+\begin{enumerate}
+    \item \textbf{Encoding}: Alice inicialitza aleatòriament un qubit en estat $\ket{0}$ o $\ket{1}$ i també tria la base (X o Z) aleatòriament. 
+    \item \textbf{Canal clàssic}: l'estat s'envia per un canal clàssic, potencialment a llargues distàncies, fins arribar a Bob. Generalment s'empren fotons amb polaritzacions ortogonals i es propaguen per una fibra òptica. Aquesta fibra és la principal font de soroll (\textit{noise}) però de moment ens centrem en el cas ideal.
+    \item \textbf{Decoding}: conforme arriben al receptor, els qubits són mesurats en la base X o Z, escollida aleatòriament, que pot coincidir o no amb la base escollida per Alice. 
+    \item \textbf{Reconciliació}: Alice i Bob comuniquen per un canal públic quines bases han emprat per a fer les mesures. Cal destacar que aquesta informació no compromet, al menys a priori, la clau. Tan sols les mesures on Alice i Bob han escollit la mateixa base són emprades en la clau final. D'aquesta forma ens assegurem que la clau d'Alice i Bob és la mateixa.
+    \item \textbf{Pressència d'Eve}: en el cas de que un observador extern intercepte els qubits en el camí entre Alice i Bob, aquest col·lapsarà la seua funció d'ona al tractar de mesurar-los. Açò farà que, quan ALice i Bob comparen els seus resultats, no tinguen la mateixa clau. Per tant poden deduir la presència d'un tercer, i sabrán que la clau ha sigut compromesa. Cal destacar que aquesta discordància (\textit{missmatch}) de les claus es pot deure també de forma indistingible a soroll, cosa que haurem de tractar més endavant.
+\end{enumerate}\newpage
+
+\section{Cas amb soroll}
+En el cas d'haver soroll, podem esperar que les claus de Alice i Bob no siguen exactament iguals, encara que no hi haja pressència d'un tercer (Eve). Per tant és important modelitzar el soroll per a estimar el seu abast. Posem per exemple que l'error del canal és d'un $10\%$, si el \textit{missmatch} entre les claus d'Alice i Bob és inferior a aquesta quantitat, no podem afirmar la pressència d'Eve. En canvi, si es supera aquesta quantitat, molt probablement un tercer haja interceptat la connexió.\\\\
+Si fem una simulació on avaluem la ràtio d'acceptació de claus (\textit{key agreement rate}) per als casos \textbf{sense Eve i sense soroll}, \textbf{amb Eve i sense soroll}, \textbf{amb Eve i amb soroll}, i \textbf{sense Eve i amb soroll}; podem veure que distingir els casos amb soroll i/o Eve és quasi impossible, almenys fins al llindar de probabilitat de soroll de l'1\%. Si augmentem aquest llindar al 10\%, podem veure que a partir del 2\% ja comencem a observar que el cas amb \textbf{només soroll} té pitjors ràtios que el cas \textbf{amb Eve}.
+\subsection{Ampliació de Privacitat}
+En el cas que el \textit{mismatch} siga superior a l'error per soroll, no està tot perdut. Podem apicar una tècnica addicional, anomenada \textbf{ampliació de privacitat} per a reduir la informació que Eve té sobre la clau final. L'idea és la següent: Eve coneix tan sols una porció de la clau, aleshores apliquem un \textit{hash}, que és un algoritme no invertible que transforma la nostra clau en una cadena (\textit{string}) més curta. Aquests algoritmes estàn pensat per a donar resultats completament diferents per a dos \textit{inputs} diferents, encara que aquests siguen molt semblants. Per tant, la clau final, emprada per Alice i Bob, serà molt diferent de la clau d'Eve, ja que, encara que aquesta conega el \textit{hash} emprat per l'emissor i receptor, no pot inferir la clau completa.
+\subsection{Millores}
+Una potencial idea pot ser començar a emprar qubits lògics, en compte de qubits físics. Els qubits lògics estan compostos per 2 o més qubits físics. Generalment aquestos s'entrellaçen de forma que presenten informació redundant, la cual cosa els fa més resistents a errors. D'aquesta forma minimitzariem l'error del canal i per tant seriem més sensibles a atacs. No obstant, no ens queda clar quanta complexitat podria afegir al sistema i com de complicat ens seria identificar a un atacant. \\\\ Altres idees que hem considerat interessants de cara a un futur seria potenciar la caracterització de fonts de soroll, desenvolupar proves de seguretat robustes per als casos en entorns ruidosos i explorar les vies de certificació oficial (com les iniciatives de Nostradamus o Vigo Quantum) d'aquests sistemes per definir els models d'amenaces (\textit{threat model}) de cada sistema.
+\end{document}
